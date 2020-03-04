@@ -128,6 +128,6 @@ def process_avis_corpus(input, output):
 
 if __name__ == '__main__':
     args = argparse_setup()
-    process_avis_corpus(args.input, args.output)
+    # process_avis_corpus(args.input, args.output)
     from git import Repo
-    Repo.clone('https://github.com/attardi/wikiextractor.git')
+    Repo.clone_from('https://github.com/attardi/wikiextractor.git', 'wikiextractor')
