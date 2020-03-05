@@ -95,7 +95,7 @@ def _process_avis_corpus(input, output):
         for fileinfo in filelist:
             if fileinfo.is_dir():
                 continue
-            print(f'Processing {fileinfo.name}....')
+            print(f'Processing {fileinfo.filename}....')
             archive = aviszip.open(fileinfo)
             if archive.name.startswith('1'):
                 _sub1_handler(archive, output)
@@ -113,6 +113,7 @@ def _maybe_download_norsk_aviskorpus(inputpath):
 
 def process_avis_corpus(inputdir, output):
     _maybe_download_norsk_aviskorpus(inputdir)
-    process_avis_corpus(inputdir, output)
+    archive_path = os.path.join(inputdir, AVIS_CORSPUS_ARCHIVE)
+    _process_avis_corpus(archive_path, output)
 
 
