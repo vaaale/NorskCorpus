@@ -88,9 +88,17 @@ def _sub1_handler(archive, outpath):
         out.flush()
     print('Archive complete.')
 
+def _maybe_download_norsk_aviskorpus(inputpath):
+    archive_path = os.path.join(inputpath, AVIS_CORSPUS_ARCHIVE)
+    if not os.path.isfile(archive_path):
+        download_from_url(AVIS_CORPUS_URL, archive_path)
 
-def _process_avis_corpus(input, output):
-    with zipfile.ZipFile(input, 'r') as aviszip:
+
+def process_avis_corpus(input, output):
+    _maybe_download_norsk_aviskorpus(input)
+    archive_path = os.path.join(input, AVIS_CORSPUS_ARCHIVE)
+
+    with zipfile.ZipFile(archive_path, 'r') as aviszip:
         filelist = aviszip.filelist
         for fileinfo in filelist:
             if fileinfo.is_dir():
@@ -105,15 +113,7 @@ def _process_avis_corpus(input, output):
                 _sub3_handler(archive, output)
 
 
-def _maybe_download_norsk_aviskorpus(inputpath):
-    archive_path = os.path.join(inputpath, AVIS_CORSPUS_ARCHIVE)
-    if not os.path.isfile(archive_path):
-        download_from_url(AVIS_CORPUS_URL, archive_path)
 
 
-def process_avis_corpus(inputdir, output):
-    _maybe_download_norsk_aviskorpus(inputdir)
-    archive_path = os.path.join(inputdir, AVIS_CORSPUS_ARCHIVE)
-    _process_avis_corpus(archive_path, output)
 
 
