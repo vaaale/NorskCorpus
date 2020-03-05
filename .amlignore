@@ -1,0 +1,7 @@
+.venv
+.idea
+corpus
+data
+wiki
+wiki.json
+wiki.txt

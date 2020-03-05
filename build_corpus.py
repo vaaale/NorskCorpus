@@ -1,6 +1,7 @@
 import argparse
 import os
 
+from parse_xml_books import process_books
 from process_avis_corpus import process_avis_corpus
 from process_wikipedia import process_wikipedia
 
@@ -36,7 +37,11 @@ if __name__ == '__main__':
     args = argparse_setup()
     if not os.path.isdir(args.input):
         os.makedirs(args.input)
+    if not os.path.isdir(args.output):
+        os.makedirs(args.output)
 
-    process_avis_corpus(args.input, args.output)
-    process_wikipedia(args.input, args.output)
+    output = os.path.join(args.output, "norsk_korpus.txt")
+    process_avis_corpus(args.input, output)
+    process_wikipedia(args.input, output)
+    process_books(args.input, output)
 

@@ -30,7 +30,6 @@ def _extract_text(doc):
                 text_line = " ".join(sentence)
                 if not "." == text_line:
                     sentences.append(text_line)
-                # print(text_line)
                 sentence = []
             else:
                 sentence.append(content)
@@ -39,15 +38,15 @@ def _extract_text(doc):
 
 def _process_book(archive):
     tar = tarfile.open(fileobj=archive, mode="r:gz")
-    document = []
-    for member in tar.getmembers():
-        f = tar.extractfile(member)
-        if f is not None:
-            xml_doc = f.read()
-            sentences = _extract_text(xml_doc)
-            if len(sentences) > 0:
-                document.append(sentences)
-    return document
+    chapters = [tar.extractfile(member) for member in tar.getmembers()]
+    chapters = [c.read() for c in chapters if c]
+    documents = []
+    with Pool(6) as p:
+        sentences = tqdm(p.imap_unordered(_extract_text, chapters, chunksize=1), total=len(chapters))
+        for sentence in sentences:
+            if len(sentence) > 0:
+                documents.append(sentence)
+    return documents
 
 
 def process_books(input, output):
@@ -65,7 +64,8 @@ def process_books(input, output):
         text = _process_book(buf)
         with open(output, 'a') as out:
             for sentences in text:
-                out.writelines(f"{sentence}\n" for sentence in sentences)
+                for sentence in sentences:
+                    out.writelines(f"{sentence}\n")
             out.flush()
 
 
