@@ -39,7 +39,7 @@ def _sub3_handler(archive, outpath):
         with open(outpath, 'a') as out:
             out.writelines(f"{sentence}\n" for sentence in sentences)
             out.flush()
-        print('Archive complete.')
+        print(f'Archive {member.name} complete.')
 
 
 def _sub2_handler(archive, outpath):
@@ -66,7 +66,8 @@ def _sub2_handler(archive, outpath):
         with open(outpath, 'a') as out:
             out.writelines(f"{sentence}\n" for sentence in sentences)
             out.flush()
-        print('Archive complete.')
+        print(f'Archive {member.name} complete.')
+
 
 
 def _sub1_handler(archive, outpath):
