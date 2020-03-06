@@ -21,6 +21,7 @@ def _sub3_handler(archive, outpath):
     members = [member for member in targz.getmembers() if member.isfile() and '/nno/' not in member.name]
     sentences = []
     for member in members:
+        '''
         f = targz.extractfile(member)
         doc = f.read().decode('iso8859-1')
         bs = BeautifulSoup(doc, 'lxml')
@@ -39,6 +40,7 @@ def _sub3_handler(archive, outpath):
         with open(outpath, 'a') as out:
             out.writelines(f"{sentence}\n" for sentence in sentences)
             out.flush()
+            '''
         print(f'Archive {member.name} complete.')
 
 
@@ -50,6 +52,7 @@ def _sub2_handler(archive, outpath):
     members = [member for member in targz.getmembers() if member.isfile()]
     sentences = []
     for member in members:
+        """
         f = targz.extractfile(member)
         data = f.read().decode('iso8859-1')
         lines = [line for line in data.split('\n') if not line.startswith("##")]
@@ -66,14 +69,15 @@ def _sub2_handler(archive, outpath):
         with open(outpath, 'a') as out:
             out.writelines(f"{sentence}\n" for sentence in sentences)
             out.flush()
+            """
         print(f'Archive {member.name} complete.')
-
 
 
 def _sub1_handler(archive, outpath):
     lines = gzip.decompress(archive.read()).decode("iso8859-1").split("\n")
     sentences = []
     sentence = []
+    """
     for word in lines:
         word = re.sub('\n', '', word)
         if len(word) == 0 or word[0] in ['<', '|'] or "." == word and len(sentence) == 0:
@@ -87,7 +91,9 @@ def _sub1_handler(archive, outpath):
     with open(outpath, 'a') as out:
         out.writelines(f"{sentence}\n" for sentence in sentences)
         out.flush()
+        """
     print('Archive complete.')
+
 
 def _maybe_download_norsk_aviskorpus(inputpath):
     archive_path = os.path.join(inputpath, AVIS_CORSPUS_ARCHIVE)

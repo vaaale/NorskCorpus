@@ -42,6 +42,6 @@ if __name__ == '__main__':
 
     output = os.path.join(args.output, "norsk_korpus.txt")
     process_avis_corpus(args.input, output)
-    process_wikipedia(args.input, output)
-    process_books(args.input, output)
+    # process_wikipedia(args.input, output)
+    # process_books(args.input, output)
 
