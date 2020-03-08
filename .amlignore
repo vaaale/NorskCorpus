@@ -2,6 +2,7 @@
 .idea
 corpus
 data
+wikiextractor
 wiki
 wiki.json
 wiki.txt
