@@ -18,8 +18,8 @@ def gather_files(path):
         for file in f:
             if '.py' in file:
                 files.append(os.path.join(r, file))
-        if os.path.exists(os.path.join(path, "requirements.txt")):
-            files.append(os.path.join(path, "requirements.txt"))
+    if os.path.exists(os.path.join(path, "requirements.txt")):
+        files.append(os.path.join(path, "requirements.txt"))
     return files
 
 

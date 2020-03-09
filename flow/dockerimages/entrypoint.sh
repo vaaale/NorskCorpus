@@ -14,12 +14,17 @@ echo $PWD
 #ls -la
 
 find . -type f -not -name '_source.tar.gz' -delete
-
+echo "Extracting _source.tar.gz"
 tar zxvf _source.tar.gz
+echo "Done"
 
 echo "Install requirements"
 pip3 install -r requirements.txt
 
-echo "Staring $1"
+echo "Staring $2"
 python3 ${@:2}
+
+RET=$?
+
+echo "Process exited with status ${RET}"
 

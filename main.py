@@ -18,14 +18,7 @@ flow = flow.add(PythonScriptStep(
     arguments=process_arguments,
     source_directory=os.getcwd(),
     compute_target=compute_target
-)).add(PythonScriptStep(
-    script_name="cat_output.py",
-    datarefs=[output_data],
-    arguments=["--input", output_data],
-    source_directory=os.getcwd(),
-    compute_target=compute_target
 ))
-
 
 
 flow.run("run_2")

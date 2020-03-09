@@ -12,7 +12,7 @@ OUT_FILE = "norsk_corpus.txt"
 def argparse_setup():
     """Return arguments to pass to main.py from CLI."""
     parser = argparse.ArgumentParser(
-        description="Make predictions using trained CatBoost model"
+        description="Build Norwegian corpus."
     )
     parser.add_argument(
         "--input",
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         os.makedirs(args.output)
 
     output = os.path.join(args.output, "norsk_korpus.txt")
-    process_avis_corpus(args.input, output)
-    # process_wikipedia(args.input, output)
-    # process_books(args.input, output)
+    process_avis_corpus(args.input, output, workers=2)
+    process_wikipedia(args.input, output)
+    process_books(args.input, output)
 
