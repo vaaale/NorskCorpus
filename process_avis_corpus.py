@@ -47,6 +47,7 @@ def _sub2_process_file(data):
                 sentence.append(word)
     return sentences
 
+
 def _sub12_handler(archive, outpath, process_function, workers):
     targz_buf = gzip.decompress(archive.read())
     buf = io.BytesIO(targz_buf)

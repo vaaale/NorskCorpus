@@ -5,7 +5,7 @@ import docker
 from io import BytesIO
 import numpy as np
 from flow.utils import gather_files, sftp_exists
-
+import threading
 
 
 class DataReference:
@@ -20,7 +20,6 @@ class DataReference:
         return self.container_path
 
 
-
 class ComputeTarget:
     def __init__(self, server, username, password):
         self.password = password
@@ -28,6 +27,8 @@ class ComputeTarget:
         self.server = server
         self.basepath = "/home/compute"
         self.rund_id = "default_run"
+        self.exit_code = 0
+        self.run_log = []
 
     def _make_tarfile(self, archive_name, source_dir):
         files = gather_files(source_dir)
@@ -55,12 +56,10 @@ class ComputeTarget:
             sftp.put(file, run_path + "/app/" + os.path.basename(file))
         sftp.close()
 
-
     def _upload_project(self, project_dir, run_path, ssh):
         project_archive = "_source.tar.gz"
         self._make_tarfile(project_archive, project_dir)
         self._transfer_files([os.path.join(project_dir, project_archive)], run_path, ssh)
-
 
     def init(self, run_id, datarefs):
         self.run_id = run_id
@@ -85,6 +84,7 @@ class ComputeTarget:
         with tarfile.open(fileobj=tarbuf, mode="w") as tar:
             tar.add("flow/dockerimages/Dockerfile", "Dockerfile")
             tar.add("flow/dockerimages/entrypoint.sh", "entrypoint.sh")
+            tar.add("flow/dockerimages/entrypoint.py", "entrypoint.py")
             tar.close()
 
         print("Building docker image")
@@ -119,18 +119,29 @@ class ComputeTarget:
             hostname=f'tcp://{self.server}:2375',
             command=f"./entrypoint.sh app {script_name} {_args}",
             volumes = volums,
-            remove=True,
+            # remove=True,
             stdout=True,
             stderr=True,
             detach=True)
-        return self.container
 
+        def read_log(_container):
+            logs = _container.logs(stream=True)
+            for line in logs:
+                log_line = line.decode("UTF-8").strip()
+                self.run_log.append(log_line)
+                print(f"LOG: {log_line}")
+
+        thread = threading.Thread(read_log(self.container))
+        thread.start()
+        self.exit_code = self.container.wait()["StatusCode"]
+        self.container.remove()
+
+        return self.exit_code
 
 
 class BaseStep:
     def __init__(self):
         pass
-
 
 
 class PythonScriptStep(BaseStep):
@@ -143,9 +154,9 @@ class PythonScriptStep(BaseStep):
         self.script_name = script_name
 
     def run(self, run_id):
-        container = self.compute_target.execute(run_id=run_id, script_name=self.script_name, script_arguments=self.arguments, datarefs=self.datarefs)
-        return container
+        exit_code = self.compute_target.execute(run_id=run_id, script_name=self.script_name, script_arguments=self.arguments, datarefs=self.datarefs)
 
+        return exit_code
 
 
 class Flow:
@@ -165,11 +176,10 @@ class Flow:
     def run(self, run_id):
         for step in self.steps:
             step.compute_target.init(run_id, self.datarefs)
-            _container = step.run(run_id)
-            logs = _container.logs(stream=True)
-
-            for line in logs:
-                print(line.decode("UTF-8").strip())
+            exit_code = step.run(run_id)
+            if exit_code != 0:
+                print("Error")
+                break
 
         return self
 

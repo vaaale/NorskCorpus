@@ -40,8 +40,10 @@ if __name__ == '__main__':
     if not os.path.isdir(args.output):
         os.makedirs(args.output)
 
-    output = os.path.join(args.output, "norsk_korpus.txt")
-    process_avis_corpus(args.input, output, workers=2)
-    process_wikipedia(args.input, output)
-    process_books(args.input, output)
+    # output = os.path.join(args.output, "norsk_korpus.txt")
+    # process_avis_corpus(args.input, output, workers=2)
+    # process_wikipedia(args.input, output)
+    # process_books(args.input, output)
+    print("This is an OK message from build_corpus.py")
+    raise Exception("Something went very wrong!!")
 
