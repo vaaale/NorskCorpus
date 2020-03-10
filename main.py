@@ -1,8 +1,8 @@
 import os
 from flow.flow import Flow, PythonScriptStep, ComputeTarget
 
-# server = "192.168.163.130"
-server = "localhost"
+server = "192.168.163.130"
+# server = "localhost"
 username = "compute"
 password = "compute"
 

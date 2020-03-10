@@ -13,7 +13,7 @@ cd ${APP_PATH}
 echo $PWD
 #ls -la
 
-find . -type f -not -name '_source.tar.gz' -delete
+find . -not -name '_source.tar.gz' -delete
 echo "Extracting _source.tar.gz"
 tar zxvf _source.tar.gz
 retVal=$?

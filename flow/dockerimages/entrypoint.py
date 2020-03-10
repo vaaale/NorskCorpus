@@ -1,6 +1,7 @@
 from subprocess import Popen, PIPE
 import sys
 import json
+import os
 
 if __name__ == '__main__':
     print("Hello World!")
@@ -10,7 +11,10 @@ if __name__ == '__main__':
     print("Staring process.... Popen")
     process = Popen(args, stdout=PIPE, stderr=PIPE)
 
-    with open("stdout.log", "w") as stdout, open("stderr.log", "w") as stderr:
+    if not os.path.isdir("../logs"):
+        os.makedirs("../logs")
+
+    with open("../logs/stdout.log", "w") as stdout, open("../logs/stderr.log", "w") as stderr:
         while True:
             stdout_lines = process.stdout.readlines()
             stderr_lines = process.stderr.readlines()

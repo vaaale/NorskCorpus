@@ -16,6 +16,9 @@ class DataReference:
         self.host_path = f"{basepath}/{run_id}/{self.path}"
         self.container_path = f"/{self.path}"
 
+    def tear_down(self):
+        pass
+
     def __str__(self) -> str:
         return self.container_path
 
@@ -104,6 +107,11 @@ class ComputeTarget:
             "bind": "/app",
             "mode": "rw"
         }
+        log_path = f"{self.basepath}/{run_id}/logs"
+        volums[log_path] = {
+            "bind": "/logs",
+            "mode": "rw"
+        }
         for ref in datarefs:
             vol = {
                     "bind": ref.container_path,
@@ -119,7 +127,6 @@ class ComputeTarget:
             hostname=f'tcp://{self.server}:2375',
             command=f"./entrypoint.sh app {script_name} {_args}",
             volumes = volums,
-            # remove=True,
             stdout=True,
             stderr=True,
             detach=True)
