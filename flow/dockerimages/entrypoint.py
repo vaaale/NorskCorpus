@@ -4,11 +4,9 @@ import json
 import os
 
 if __name__ == '__main__':
-    print("Hello World!")
     args = sys.argv
     args[0] = "python3"
     print(args)
-    print("Staring process.... Popen")
     process = Popen(args, stdout=PIPE, stderr=PIPE)
 
     if not os.path.isdir("../logs"):

@@ -1,13 +1,13 @@
 import os
-from flow.flow import Flow, PythonScriptStep, ComputeTarget
+from flow.flowapi import Flow, PythonScriptStep, ComputeTarget
 
-server = "192.168.163.130"
-# server = "localhost"
+# server = "192.168.163.130"
+server = "localhost"
 username = "compute"
 password = "compute"
 
-flow = Flow()
-compute_target = ComputeTarget(server, username, password)
+flow = Flow(server=server)
+compute_target = ComputeTarget(name="my_compute", type=Flow.COMPUTE_TYPE_PYTHON)
 
 input_data = flow.add_data_reference(path="archives")
 output_data = flow.add_data_reference(path="rawtext")
