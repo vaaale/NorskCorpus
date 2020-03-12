@@ -52,17 +52,17 @@ class PythonScriptStep(BaseStep):
         datarefs_json = []
         for ref in self.datarefs:
             datarefs_json.append(ref.name)
+
         args_json = []
         for arg in self.arguments:
             if isinstance(arg, DataReference):
-                args_json.append(str(arg))
+                args_json.append({"type": "DATAREF", "name": arg.name})
             else:
                 args_json.append(arg)
 
         step_json = {
             "step_type": self.type,
             "script_name": self.script_name,
-            "source_directory": self.source_directory,
             "arguments": args_json,
             "compute_target": self.compute_target.name,
             "datarefs": datarefs_json
@@ -73,7 +73,7 @@ class PythonScriptStep(BaseStep):
 class Flow:
 
     COMPUTE_TYPE_PYTHON = "python"
-    COMPUTE_TYPE_NVIDIA = "nvidia"
+    COMPUTE_TYPE_NVIDIA = "cuda"
 
     def __init__(self, server="localhost", username=None, password=None, source_root="."):
         self.source_root = source_root
