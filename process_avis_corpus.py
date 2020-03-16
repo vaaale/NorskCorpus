@@ -19,6 +19,8 @@ AVIS_CORSPUS_ARCHIVE = "norsk_aviskorpus.zip"
 def _sub3_process_file(doc):
     bs = BeautifulSoup(doc, 'lxml')
     text_div = bs.find("div", {"type": "text"})
+    if not text_div:
+        return []
     text = [p.getText() for p in text_div.find_all('p')]
 
     sentences = []

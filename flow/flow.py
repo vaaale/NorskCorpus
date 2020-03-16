@@ -152,11 +152,10 @@ class BaseStep:
 
 
 class PythonScriptStep(BaseStep):
-    def __init__(self, script_name, arguments, source_directory, datarefs, compute_target):
+    def __init__(self, script_name, arguments, datarefs, compute_target):
         super().__init__()
         self.compute_target = compute_target
         self.datarefs = datarefs
-        self.source_directory = source_directory
         self.arguments = arguments
         self.script_name = script_name
 
@@ -173,6 +172,10 @@ class Flow:
 
     def add(self, step):
         self.steps.append(step)
+        return self
+
+    def add_datarefs(self, datarefs):
+        self.datarefs += datarefs
         return self
 
     def add_data_reference(self, path):

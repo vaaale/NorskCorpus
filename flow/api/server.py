@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, url_for, send_from_directory
 import json
 import os
 
-from flow.flow import PythonScriptStep, DataReference, ComputeTarget
+from flow.flow import PythonScriptStep, DataReference, ComputeTarget, Flow
 
 app = Flask(__name__)
 UPLOAD_FOLDER="/tmp"
@@ -18,43 +18,51 @@ def allowed_file(filename):
     return ".tar" in filename
 
 def build_datarefs(configs):
-    refs = []
+    refs = {}
     for config in configs:
         ref = DataReference(config["path"])
-        refs.append(ref)
+        refs[config["name"]] = ref
     return refs
 
 def build_computes(configs):
-    compute_list = []
+    compute_list = {}
     for config in configs:
         compute_type = config["type"]
         if "python" == compute_type:
             target = ComputeTarget(server=server, username=username, password=password)
-            compute_list.append(target)
+            compute_list[config["name"]] = target
         elif "cuda" == compute_type:
             raise Exception("Compute type Cuda is not implemented yet")
     return compute_list
 
-def build_arguments(config, datarefs):
-    arguments = []
-    for a in config:
-        if isinstance(a, str):
-            arguments.append(a)
-        elif isinstance(a, dict):
+def parse_arguments(arguments):
+    res = {"datarefs": []}
+    for a in arguments:
+        if isinstance(a, dict):
             if a["type"] == "DATAREF":
-                pass
+                res["datarefs"].append(a)
 
+    return res
 
-def build_job(config, source):
-    configs = config['steps']
-    computes = build_computes(config["computes"])
-    datarefs = build_datarefs(config["datarefs"])
-    for config in configs:
-        if config["step_type"] == "PythonStep":
+def get_datarefs(datarefs, step_datarefs):
+    res = []
+    for name in step_datarefs:
+        res.append(datarefs[name])
+    return res
 
-            arguments = build_arguments(config["arguments"], datarefs)
+def build_job(run_config, source):
+    steps = run_config['steps']
+    computes = build_computes(run_config["computes"])
+    datarefs = build_datarefs(run_config["datarefs"])
+    flow = Flow()
+    for step in steps:
+        if step["step_type"] == "PythonStep":
+            step_datarefs = get_datarefs(datarefs, step["datarefs"])
 
-            step = PythonScriptStep(script_name=config["script_name"])
+            step = PythonScriptStep(script_name=step["script_name"],
+                                    arguments=step["arguments"],
+                                    datarefs=step_datarefs,
+                                    compute_target=computes[step["compute_target"]])
 
     print("")
 
