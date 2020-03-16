@@ -13,7 +13,7 @@ BOOKS_ARCHIVE = "xml_idf_boker_gz.tar"
 def _maybe_download(inputpath):
     archive_path = os.path.join(inputpath, BOOKS_ARCHIVE)
     if not os.path.isfile(archive_path):
-        download_from_url(BOOKS_ARCHIVE, archive_path)
+        download_from_url(BOOKS_DOWNLOAD_URL, archive_path)
 
 
 def _extract_text(doc):
